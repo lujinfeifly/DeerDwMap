@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.lujinfei.deerdwmap.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+    <ProgressBar
+        android:id="@+id/login_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
+    <ViewFlipper
+        android:id="@+id/vf_loginout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:visibility="gone">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/email_login_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="50dip"
+                    android:layout_height="50dip"
+                    android:src="@drawable/head"/>
+
+                <TextView
+                    android:id="@+id/logout_tvaccount"
+                    android:layout_marginTop="10dip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="账号：736214397"/>
+
+                <Button
+                    android:id="@+id/logout_btnlogoutbutton"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/action_log_out"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </ScrollView>
+    </ViewFlipper>
+    <ViewFlipper
+        android:id="@+id/vf_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone">
+        <!--<ScrollView
+            android:id="@+id/list_form"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">-->
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id = "@+id/swipe_ly"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <deer.milu.freeandroid.swipelistview.SwipeMenuListView
+                android:id="@+id/lv_account_list"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="#ffffffff"
+                android:cacheColorHint="#00000000"
+                android:divider="@drawable/common_list_driver10_layer"
+                android:dividerHeight="1px"
+                android:fadingEdge="none"
+                android:clickable="false"
+                android:footerDividersEnabled="true"
+                android:scrollbars="none"
+                android:scrollingCache="false" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+        <!--</ScrollView>-->
+    </ViewFlipper>
+
+    <ViewFlipper
+        android:id="@+id/vf_watchapp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dip">
+
+            <LinearLayout
+                android:id="@+id/ll_step1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="40dip"
+                android:visibility="invisible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingMultiplier ="1.9"
+                    android:textSize="16dp"
+                    android:text="1.  手表和手机都开启蓝牙，并相互连接上 \n2.  打开手表的dwMap，可看到有一串验证码 \n3.  当手机上展示如下图，进行下一步"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="100dip"
+                    android:layout_marginTop="10dip"
+                    android:src="@drawable/link"/>
+                <Button
+                    android:id="@+id/btn_nextto2"
+                    android:layout_marginTop="10dip"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="下一步"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/ll_step2"
+                android:layout_width="280dip"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="40dip"
+                android:layout_marginLeft="30dip"
+                android:visibility="invisible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:text="@string/tip_link_watch"/>
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="110dip"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dip">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/link_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="XXXX-XXXX"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:maxLength="9"
+                        android:singleLine="true" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/linkwatch_button"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/action_link_watch"
+                    android:textStyle="bold"
+                    android:enabled="false"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_step3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="40dip"
+                android:visibility="invisible">
+
+                <TextView
+                    android:id="@+id/txt_link_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingMultiplier = "1.9"
+                    android:textSize="16dp"
+                    android:text="您已成功连接"/>
+
+                <Button
+                    android:id="@+id/btn_preto2"
+                    android:layout_marginTop="10dip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="返回上一步"/>
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </ViewFlipper>
+
+    <ViewFlipper
+        android:id="@+id/vf_allgbx"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone">
+
+        <deer.milu.freeandroid.swipelistview.SwipeMenuListView
+            android:id="@+id/lv_filegbx_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffffff"
+            android:cacheColorHint="#00000000"
+            android:divider="@drawable/common_list_driver10_layer"
+            android:dividerHeight="1px"
+            android:fadingEdge="none"
+            android:clickable="false"
+            android:footerDividersEnabled="true"
+            android:scrollbars="none"
+            android:scrollingCache="false" />
+
+    </ViewFlipper>
+
+    <ViewFlipper
+        android:id="@+id/vf_allimp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone">
+        <WebView
+            android:id="@+id/webview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="vertical"
+            />
+    </ViewFlipper>
+
+    <ViewFlipper
+        android:id="@+id/vf_self"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:visibility="gone"
+        >
+        <LinearLayout
+            android:layout_width="280dip"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="40dip"
+            android:layout_marginLeft="30dip">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:text="版本号：1.3.0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:layout_marginTop="10dip"
+                android:text="开发者：lujinfei"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:text="邮箱：lujinfeifly@aliyun.com"
+                android:layout_marginTop="10dip"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:text="讨论QQ群：557352881"
+                android:layout_marginTop="10dip"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18dp"
+                android:text="业余时间开发，请支持"
+                android:layout_marginTop="10dip"/>
+        </LinearLayout>
+    </ViewFlipper>
+
+</RelativeLayout>

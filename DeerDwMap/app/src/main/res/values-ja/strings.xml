@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">dwMap</string>
+    <string name="login_tip">  ご使用くださいdwMapアカウント登録，どうぞdynamic.watch登録しなければ！</string>
+    <string name="prompt_email">アカウント</string>
+    <string name="prompt_password">パスワード</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">登録</string>
+    <string name="action_log_out">おかげで</string>
+    <string name="tip_link_watch">第2行の9桁の腕時計を入力して下さい：</string>
+    <string name="action_link_watch">接続腕時計</string>
+    <string name="tip_upload_title">このファイルをアップロードしますか？</string>
+    <string name="tip_upload_Msg1">アップロードファイルをアップロードします\n“</string>
+    <string name="tip_upload_Msg2">”,\nアップロードしてファイルをアップロードしてdwMap；\nキャンセルキャンセルは中止。</string>
+
+    <string name="tip_setdefault_title">時計の経路を設定する</string>
+    <string name="tip_setdefault_Msg1">あなたは設定します\n“</string>
+    <string name="tip_setdefault_Msg2">”,\n既定の経路としては、時計には。</string>
+
+    <string name="action_cancel">キャンセル</string>
+    <string name="action_upload">アップロード</string>
+    <string name="action_sure">確認</string>
+
+    <string name="error_invalid_email">メールアドレスエラー</string>
+    <string name="error_invalid_password">パスワードが短い</string>
+    <string name="error_incorrect_password">パスワードエラー</string>
+    <string name="error_field_required">この必填</string>
+    <string name="navigation_drawer_open">折りたたみカードを開く</string>
+    <string name="navigation_drawer_close">折りたたみカード</string>
+
+    <string name="action_settings">設置</string>
+    <string name="title_activity_login">登録</string>
+
+    <string name="tip_success">成功</string>
+    <string name="tip_setting">設定中...</string>
+    <string name="tip_uploading">アップロード中...</string>
+
+    <string name="line_account">アカウント：</string>
+
+    <string name="drawer_header">ローカル</string>
+    <string name="drawer_all_path">すべての経路</string>
+    <string name="drawer_link_watch">腕時計同期</string>
+    <string name="drawer_set">设置</string>
+    <string name="drawer_all_local">すべてのgpxファイル(六只脚)</string>
+    <string name="drawer_help">助ける</string>
+    <string name="drawer_about">について</string>
+
+    <string name="link_watch_last_step">腕時計を接続する！\nあなたがこのとき時計の「上」ボタンを押して引き続き</string>
+    <string name="link_watch_already_linked">この表は接続で、もしあなたは腕時計の状態は接続コード、どうぞ名目に時計端app、再入国接続を行う</string>
+    <string name="link_watch_time_exceeded">リンク殘業！どうぞ名目に時計端dwMap、再入国接続を行う</string>
+    <string name="link_watch_failed">失敗！\nあなたは、一歩再再操作に戻ることができます</string>
+</resources>

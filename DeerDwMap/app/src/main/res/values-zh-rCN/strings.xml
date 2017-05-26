@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">dwMap</string>
+    <string name="login_tip">  请使用dwMap账号登陆，如果没有请到dynamic.watch注册！</string>
+    <string name="prompt_email">账号</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">登录</string>
+    <string name="action_log_out">退出</string>
+    <string name="tip_link_watch">请输入第二行的9位手表连接码：</string>
+    <string name="action_link_watch">连接手表</string>
+    <string name="tip_upload_title">确定上传此文件吗？</string>
+    <string name="tip_upload_Msg1">您将上传文件\n“</string>
+    <string name="tip_upload_Msg2">”,\n点击上传将文件上传到dwMap；\n点击取消则中止。</string>
+
+    <string name="tip_setdefault_title">设置为手表路径</string>
+    <string name="tip_setdefault_Msg1">您将设置\n“</string>
+    <string name="tip_setdefault_Msg2">”,\n为默认路径，可以同步到手表中。</string>
+
+    <string name="action_cancel">取消</string>
+    <string name="action_upload">上传</string>
+    <string name="action_sure">确认</string>
+
+    <string name="error_invalid_email">邮件地址错误</string>
+    <string name="error_invalid_password">密码太短</string>
+    <string name="error_incorrect_password">密码错误</string>
+    <string name="error_field_required">此项必填</string>
+    <string name="navigation_drawer_open">打开折叠卡</string>
+    <string name="navigation_drawer_close">关闭折叠卡</string>
+
+    <string name="action_settings">设置</string>
+    <string name="title_activity_login">登录</string>
+
+    <string name="tip_success">成功</string>
+    <string name="tip_setting">设置中...</string>
+    <string name="tip_uploading">上传中...</string>
+
+    <string name="line_account">账号：</string>
+
+    <string name="drawer_header">本地</string>
+    <string name="drawer_all_path">所有路径</string>
+    <string name="drawer_link_watch">手表同步</string>
+    <string name="drawer_set">设置</string>
+    <string name="drawer_all_local">所有gpx文件(六只脚)</string>
+    <string name="drawer_help">帮助</string>
+    <string name="drawer_about">关于</string>
+
+    <string name="link_watch_last_step">连接手表成功！\n您此时需要长按手表的“向上”按钮继续</string>
+    <string name="link_watch_already_linked">此表已经连接，如果您手表上的状态还是连接码，请退出手表端app，重新进入进行连接</string>
+    <string name="link_watch_time_exceeded">连接码超时！请退出手表端dwMap，重新进入进行连接</string>
+    <string name="link_watch_failed">失败！\n您可以返回上一步重新操作</string>
+</resources>

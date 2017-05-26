@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_allpath"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/drawer_all_path" />
+        <item
+            android:id="@+id/nav_watchapp"
+            android:icon="@drawable/ic_menu_linkwatch"
+            android:title="@string/drawer_link_watch" />
+        <item
+            android:id="@+id/nav_manage"
+            android:icon="@drawable/ic_menu_manage"
+            android:title= "@string/drawer_set"/>
+    </group>
+
+    <item android:title="@string/drawer_header">
+        <menu>
+            <group android:checkableBehavior="single">
+            <item
+                android:id="@+id/nav_localgbx"
+                android:icon="@drawable/ic_menu_foot"
+                android:title="@string/drawer_all_local" />
+            <item
+                android:id="@+id/nav_help"
+                android:icon="@drawable/ic_menu_help"
+                android:title="@string/drawer_help" />
+            <item
+                android:id="@+id/nav_self"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/drawer_about" />
+            </group>
+        </menu>
+    </item>
+
+</menu>

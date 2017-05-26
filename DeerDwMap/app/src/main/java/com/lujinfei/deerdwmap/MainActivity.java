@@ -1,0 +1,661 @@
+package com.lujinfei.deerdwmap;
+
+
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
+import android.view.View;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View.OnClickListener;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.ViewFlipper;
+
+import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.adapter.GbxListAdapter;
+import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.adapter.PathListAdapter;
+import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.bean.AData;
+import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.storedata.LocalPath;
+import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.storedata.PathData;
+import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.storedata.User;
+import com.umeng.analytics.MobclickAgent;
+
+import org.json.JSONException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import deer.milu.freeandroid.swipelistview.SwipeMenu;
+import deer.milu.freeandroid.swipelistview.SwipeMenuCreator;
+import deer.milu.freeandroid.swipelistview.SwipeMenuItem;
+import deer.milu.freeandroid.swipelistview.SwipeMenuListView;
+import deer.milu.freejava.http.HttpRet;
+
+public class MainActivity extends BaseActivity
+        implements NavigationView.OnNavigationItemSelectedListener,OnClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener{
+
+    private SwipeMenuListView lvPathList;
+    private ListView lvGbxList;
+    private PathListAdapter pathListAdapter = null;
+    private GbxListAdapter gbxListAdapter = null;
+
+    private ViewFlipper vfLogin;
+    private ViewFlipper vfList;
+    private ViewFlipper vfWatch;
+    private ViewFlipper vfAllgbx;
+    private ViewFlipper vfAllimp;
+    private ViewFlipper vfSelf;
+
+    private Button btnLinkWatch;
+    private List<File> localFileListGbx;
+
+    private TextView tvAccountLogout;
+    private AutoCompleteTextView tvLinkCode;
+
+    private NavigationView navigationView;
+
+    private AData data = null;
+
+    private int nowindex = 0;
+
+    private FloatingActionButton fab;
+    private TextView tvAccountShow;
+
+    private String linkWatchKey;
+    private int fileUploadIndex;
+
+    private LinearLayout llstep1,llstep2,llstep3;
+
+    private Button btnLinkWatchEnd;
+    private TextView txtLinkResult;
+    private int mCurrentIndex;
+
+    private WebView webView;
+
+    private boolean isloadWebView = false;
+
+    private SwipeRefreshLayout mSwipeLayoutPathList;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.hideOverflowMenu();
+//        toolbar.setOverflowIcon(null);
+
+        vfLogin = (ViewFlipper)findViewById(R.id.vf_loginout);
+        vfList = (ViewFlipper)findViewById(R.id.vf_list);
+        vfWatch = (ViewFlipper)findViewById(R.id.vf_watchapp);
+        vfAllgbx = (ViewFlipper)findViewById(R.id.vf_allgbx);
+        vfAllimp = (ViewFlipper)findViewById(R.id.vf_allimp);
+        vfSelf = (ViewFlipper)findViewById(R.id.vf_self);
+
+        tvAccountLogout = (TextView)findViewById(R.id.logout_tvaccount);
+        tvLinkCode = (AutoCompleteTextView)findViewById(R.id.link_code);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            Intent intent = new Intent(Intent.ACTION_MAIN);
+//            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//            ComponentName cn = new ComponentName(packageName, className);
+//            intent.setComponent(cn);
+//            startActivity(intent);
+            }
+        });
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        Button btnLogout = (Button) findViewById(R.id.logout_btnlogoutbutton);
+        btnLogout.setOnClickListener(this);
+
+        tvAccountShow = (TextView)navigationView.getHeaderView(0).findViewById(R.id.tv_accountshow);
+        lvPathList = (SwipeMenuListView)findViewById(R.id.lv_account_list);
+
+        // step 1. create a MenuCreator
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "open" item
+//                SwipeMenuItem openItem = new SwipeMenuItem(
+//                        getApplicationContext());
+//                // set item background
+//                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
+//                        0xCE)));
+//                // set item width
+//                openItem.setWidth(180);
+//                // set item title
+//                openItem.setTitle("Open");
+//                // set item title fontsize
+//                openItem.setTitleSize(18);
+//                // set item title font color
+//                openItem.setTitleColor(Color.WHITE);
+//                // add to menu
+//                menu.addMenuItem(openItem);
+
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(
+                        getApplicationContext());
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                        0x3F, 0x25)));
+                // set item width
+                deleteItem.setWidth(200);
+                // set a icon
+                deleteItem.setIcon(R.drawable.ic_delete);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+
+        lvPathList.setMenuCreator(creator);
+        lvGbxList = (ListView)findViewById(R.id.lv_filegbx_list);
+
+        btnLinkWatch = (Button)findViewById(R.id.linkwatch_button);
+        btnLinkWatch.setOnClickListener(this);
+        txtLinkResult = (TextView) findViewById(R.id.txt_link_result);
+
+        llstep1 = (LinearLayout)findViewById(R.id.ll_step1);
+        llstep2 = (LinearLayout)findViewById(R.id.ll_step2);
+        llstep3 = (LinearLayout)findViewById(R.id.ll_step3);
+
+        btnLinkWatchEnd = (Button)findViewById(R.id.btn_preto2);
+        btnLinkWatchEnd.setOnClickListener(this);
+
+
+        Button btnLinkWatchNext2 = (Button)findViewById(R.id.btn_nextto2);
+        btnLinkWatchNext2.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                llstep1.setVisibility(View.INVISIBLE);
+                llstep2.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+
+        data = new AData();
+        pathListAdapter = new PathListAdapter(MainActivity.this, data.getRows());
+        lvPathList.setAdapter(pathListAdapter);
+
+        localFileListGbx = new ArrayList<File>();
+        gbxListAdapter = new GbxListAdapter(MainActivity.this, localFileListGbx);
+        lvGbxList.setAdapter(gbxListAdapter);
+
+        lvPathList.setOnItemClickListener(this);
+        lvGbxList.setOnItemClickListener(this);
+
+        mSwipeLayoutPathList = (SwipeRefreshLayout) findViewById(R.id.swipe_ly);
+        mSwipeLayoutPathList.setOnRefreshListener(this);
+
+        webView = (WebView) findViewById(R.id.webview);
+        webView.getSettings().setJavaScriptEnabled(true);
+
+        mCurrentIndex = R.id.vf_list; //表示为第一页
+        initView();
+    }
+
+    private void initView() {
+
+        navigationView.setCheckedItem(R.id.nav_allpath);
+
+        String strData = PathData.getName(this);
+        try {
+            data = new AData(strData);
+            pathListAdapter.setData(data.getRows());
+        }catch(JSONException ex) {
+            ex.printStackTrace();
+        }
+        if(data.getRows() != null) {
+            handler.obtainMessage(0, null).sendToTarget();
+        }
+
+        // 账号显示
+        String acc = User.getName(this);
+        tvAccountShow.setText(acc);
+        tvAccountLogout.setText(getText(R.string.line_account) + acc);
+    }
+
+
+
+    private void showMsg(String msg) {
+        Snackbar.make(fab, msg, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.main, menu);
+        return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void invisibleAllPage() {
+        vfSelf.setVisibility(View.GONE);
+        vfAllgbx.setVisibility(View.GONE);
+        vfAllimp.setVisibility(View.GONE);
+        vfLogin.setVisibility(View.GONE);
+        vfList.setVisibility(View.GONE);
+        vfWatch.setVisibility(View.GONE);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        invisibleAllPage();
+        mCurrentIndex = id;
+        switch(id) {
+            case R.id.nav_manage:
+                vfLogin.setVisibility(View.VISIBLE);
+                break;
+            case R.id.nav_allpath:
+                vfList.setVisibility(View.VISIBLE);
+                break;
+            case R.id.nav_watchapp: // 连接手机，需要请求进行
+                new Thread(networkTaskLinkPre).start();
+                initLinkWatchView();
+                break;
+            case R.id.nav_localgbx:
+                loadLocalGbx();
+                vfAllgbx.setVisibility(View.VISIBLE);
+                break;
+            case R.id.nav_help:
+                if(!isloadWebView) {
+                    webView.loadUrl("http://dwmap.applinzi.com/haaa.html");
+                    webView.setWebViewClient(new WebViewClient());
+                    isloadWebView = true;
+                }
+                vfAllimp.setVisibility(View.VISIBLE);
+                break;
+            case R.id.nav_self:
+                vfSelf.setVisibility(View.VISIBLE);
+                break;
+            default:
+
+        }
+
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void initLinkWatchView() {
+        vfWatch.setVisibility(View.VISIBLE);
+        llstep1.setVisibility(View.VISIBLE);
+        llstep2.setVisibility(View.INVISIBLE);
+        llstep3.setVisibility(View.INVISIBLE);
+    }
+
+    private void linkWatchView(int ret) {
+        llstep2.setVisibility(View.INVISIBLE);
+        llstep3.setVisibility(View.VISIBLE);
+        switch(ret) {
+            case 0:
+                txtLinkResult.setText(getText(R.string.link_watch_last_step));
+                btnLinkWatchEnd.setVisibility(View.INVISIBLE);
+                break;
+            case 2:
+                txtLinkResult.setText(getText(R.string.link_watch_already_linked));
+                btnLinkWatchEnd.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                txtLinkResult.setText(getText(R.string.link_watch_time_exceeded));
+                btnLinkWatchEnd.setVisibility(View.VISIBLE);
+                break;
+            case 1:
+
+            default:
+                txtLinkResult.setText(getText(R.string.link_watch_failed));
+                btnLinkWatchEnd.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+
+    private void loadLocalGbx() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            //申请WRITE_EXTERNAL_STORAGE权限
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    1);
+        }else {
+            readGpx();
+        }
+    }
+
+    private void readGpx() {
+        localFileListGbx.clear();
+        localFileListGbx.addAll(LocalPath.getSixFootGbx(this));
+
+        gbxListAdapter.notifyDataSetChanged();
+    }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {// 读存储权限
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission Granted
+                readGpx();
+            } else {
+                // Permission Denied
+
+            }
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.logout_btnlogoutbutton:
+                User.setName(this,"","");
+                User.setSession(this,"");
+                exitToLogin();
+                break;
+            case R.id.linkwatch_button:
+                hideKeyBoard();
+                new Thread(networkTaskLink).start();
+                break;
+            case R.id.btn_preto2:
+                llstep3.setVisibility(View.INVISIBLE);
+                llstep2.setVisibility(View.VISIBLE);
+            default:
+        }
+    }
+
+    Runnable networkTask = new Runnable() {
+
+        @Override
+        public void run() {
+            HttpRet abc = httpFunc.dwMaplogin("", "");
+            Log.i("www", abc.toString());
+
+            HttpRet  ret  = httpFunc.dwMapGetList();
+
+
+            try {
+                data = new AData(ret.getmRetContent());
+                pathListAdapter.setData(data.getRows());
+            }catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+            if(data.getRows() != null) {
+                handler.obtainMessage(0, null).sendToTarget();
+            }
+
+        }
+    };
+
+    Runnable networkTaskGetList = new Runnable() {
+
+        @Override
+        public void run() {
+            HttpRet  ret  = httpFunc.dwMapGetList();
+
+
+            try {
+                data = new AData(ret.getmRetContent());
+                pathListAdapter.setData(data.getRows());
+            }catch(JSONException ex) {
+                ex.printStackTrace();
+            }
+            if(data.getRows() != null) {
+                handler.obtainMessage(0, null).sendToTarget();
+            }
+
+        }
+    };
+
+    // 请求连接手机的准备
+    Runnable networkTaskLinkPre = new Runnable() {
+
+        @Override
+        public void run() {
+        HttpRet ret = httpFunc.dwMapLinkWatchPre();
+        Log.i("www", ret.toString());
+        if(ret.getmRetCode() == 200) {
+            Document doc = Jsoup.parse(ret.getmRetContent());
+            Elements contents = doc.getElementsByAttributeValue("name", "authenticity_token");
+            Element content = contents.get(0);
+            linkWatchKey = content.attr("value");
+        }
+
+        handler.obtainMessage(2, "").sendToTarget();
+
+        }
+    };
+
+    // 连接手机
+    Runnable networkTaskLink = new Runnable() {
+
+        @Override
+        public void run() {
+            HttpRet ret = httpFunc.dwMapLinkWatch(linkWatchKey, tvLinkCode.getText().toString());
+            Log.i("www", ret.toString());
+
+            int pass = 1;
+
+            if(ret.getmRetCode() == 200) {
+                if(ret.getmRetContent().contains("Link code not found")) {
+                    pass = 1; // 没有找到此链接码
+                } else if(ret.getmRetContent().contains("Watch is already linked")) {
+                    pass = 2;  // 已经连接
+                } else if(ret.getmRetContent().contains("Link code has expired")) {
+                    pass = 3;  // 连接码已超时
+                }
+            }else if (ret.getmRetCode() == 302 && ret.getmRetContent().contains("me")) {
+                pass = 0;
+            }
+
+            handler.obtainMessage(3, pass).sendToTarget();
+
+        }
+    };
+
+    Runnable networkTaskSetDefault = new Runnable() {
+        @Override
+        public void run() {
+
+            HttpRet ret = httpFunc.dwMapSetDefault(data.getRows().get(nowindex).getTable().getId());
+            if(ret.getmRetCode() == 200) {
+                int size = data.getRows().size();
+                for(int i = 0;i<size;i++) {
+                    data.getRows().get(i).getTable().setCurrent_sync(false);
+                }
+                data.getRows().get(nowindex).getTable().setCurrent_sync(true);
+
+                handler.obtainMessage(1, null).sendToTarget();
+            }
+        }
+    };
+
+    Runnable networkTaskUpload = new Runnable() {
+        @Override
+        public void run() {
+            File file = localFileListGbx.get(fileUploadIndex);
+            HttpRet ret = httpFunc.dwMapUpload(file);
+            int data = 1;
+            if(ret.getmRetCode() == 200) {
+                data = 0;
+            } else {
+                data = 1;
+            }
+            handler.obtainMessage(4, data).sendToTarget();
+        }
+    };
+
+    private android.os.Handler handler = new android.os.Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            int ret = 1;
+            switch (msg.what) {
+                case 0:
+                    pathListAdapter.notifyDataSetChanged();
+                    if(mCurrentIndex == R.id.vf_list) {
+                        vfList.setVisibility(View.VISIBLE);
+                        vfLogin.setVisibility(View.GONE);
+                        mSwipeLayoutPathList.setRefreshing(false);
+                    }
+                    MobclickAgent.onEvent(MainActivity.this, "SET_SYNC");
+                    break;
+                case 1:
+                    cancleLoading();
+                    pathListAdapter.notifyDataSetChanged();
+                    break;
+                case 2: // 准备好同步手机
+                    btnLinkWatch.setEnabled(true);
+                    break;
+                case 3: // 连接手机结果
+                    ret = (int)msg.obj;
+                    linkWatchView(ret);
+                    break;
+                case 4: // 上传结果
+                    ret = (int)msg.obj;
+                    cancleLoading();
+                    if(ret == 0) {
+                        MobclickAgent.onEvent(MainActivity.this, "UPLOAD_PATH_OK");
+                        new Thread(networkTaskGetList).start();
+                    }
+                    MobclickAgent.onEvent(MainActivity.this, "UPLOAD_PATH");
+                    break;
+            }
+
+        }
+    };
+
+    private void exitToLogin() {
+        Intent loginInfo = new Intent(this, LoginActivity.class);
+        loginInfo.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(loginInfo);
+        this.finish();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+        switch(parent.getId()) {
+            case R.id.lv_filegbx_list: // 列表
+                showOperDialog(1, this.getString(R.string.tip_upload_title),
+                        getString(R.string.tip_upload_Msg1) +
+                                localFileListGbx.get(position).getName() +
+                                getString(R.string.tip_upload_Msg2),
+                        getString(R.string.action_cancel),
+                        getString(R.string.action_upload),
+                        null,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                fileUploadIndex = position;
+                                showLoading(getString(R.string.tip_uploading));
+                                new Thread(networkTaskUpload).start();
+                            }
+                        });
+                break;
+            case R.id.lv_account_list: // 路径列表
+                showOperDialog(1, this.getString(R.string.tip_setdefault_title),
+                        getString(R.string.tip_setdefault_Msg1) +
+                                data.getRows().get(position).getTable().getName() +
+                                getString(R.string.tip_setdefault_Msg2),
+                        getString(R.string.action_cancel),
+                        getString(R.string.action_sure),
+                        null,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                showLoading(getString(R.string.tip_setting));
+                                nowindex = position;
+                                new Thread(networkTaskSetDefault).start();
+                            }
+                        });
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        new Thread(networkTaskGetList).start();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(mSwipeLayoutPathList.isRefreshing()) {
+                    mSwipeLayoutPathList.setRefreshing(false);
+                }
+            }
+        }, 5000);
+    }
+}
