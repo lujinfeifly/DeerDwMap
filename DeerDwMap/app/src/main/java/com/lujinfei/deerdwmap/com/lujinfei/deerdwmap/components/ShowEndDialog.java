@@ -55,6 +55,11 @@ public class ShowEndDialog extends Dialog implements DialogListener{
         tipTextView.setText(R.string.tip_success);
     }
 
+    public void setError() {
+        sharkView.setError();
+        tipTextView.setText(R.string.tip_fail);
+    }
+
     @Override
     public void onColse() {
         new Handler().postDelayed(new Runnable() {

@@ -31,9 +31,15 @@
     <string name="action_settings">設定</string>
     <string name="title_activity_login">登錄</string>
 
+    <string name="distance_miles">Miles</string>
+    <string name="distance_km">Km</string>
+
     <string name="tip_success">成功</string>
+    <string name="tip_fail">失败</string>
     <string name="tip_setting">设置中...</string>
     <string name="tip_uploading">上传中...</string>
+
+    <string name="title_switch">距离单位：</string>
 
     <string name="line_account">账号：</string>
 

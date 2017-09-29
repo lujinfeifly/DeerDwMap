@@ -32,4 +32,8 @@ public class IISharkView extends View {
 
     }
 
+    public void setError() {
+
+    }
+
 }

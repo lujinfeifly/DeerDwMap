@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.lujinfei.deerdwmap.R;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.bean.Path;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +72,22 @@ public class PathListAdapter extends CommonAdapter<Path> {
 
         Path bean = dataList.get(position);
         viewItem.tvAccount.setText(bean.getTable().getName());
-        viewItem.tvMiles.setText(bean.getTable().getDistance_display());
+
+        String distanceMales = bean.getTable().getDistance_display();
+        BigDecimal dis = new BigDecimal(distanceMales);
+        String displayDis = "";
+
+        switch(bean.getTable().getDistanceUnit()) {
+            case 1:
+                displayDis = dis.setScale(2, RoundingMode.HALF_UP).toPlainString() + " mi";
+                break;
+            case 2:
+                dis = dis.multiply(new BigDecimal("1.61"));
+                displayDis = dis.setScale(2, RoundingMode.HALF_UP).toPlainString() + " km";
+                break;
+        }
+
+        viewItem.tvMiles.setText(displayDis);
         viewItem.tvLocation.setText(bean.getTable().getCity());
 //        Log.i("sddd", bean.getTable().getName() + bean.getTable().isCurrent_sync());
         if(bean.getTable().isCurrent_sync()) {

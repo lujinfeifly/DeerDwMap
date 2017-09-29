@@ -2,6 +2,11 @@ package com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.httpfunc;
 
 import android.util.Log;
 
+import com.github.lujinfeifly.freejava.basic.MString;
+import com.github.lujinfeifly.freejava.bean.MNameValuePair;
+import com.github.lujinfeifly.freejava.http.HttpRet;
+import com.github.lujinfeifly.freejava.http.MUrl;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,10 +16,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import deer.milu.freejava.basic.MString;
-import deer.milu.freejava.bean.MNameValuePair;
-import deer.milu.freejava.http.HttpRet;
-import deer.milu.freejava.http.MUrl;
 
 /**
  * Created by lujinfei on 2016/4/1.
@@ -67,14 +68,14 @@ public class HttpFunc {
     }
 
     public HttpRet dwMapGetList() {
-        HttpRet ret =  MUrl.sendGetRequest("http://dynamic.watch/routes/page/0/100.json", "", sessionid);
+        HttpRet ret =  MUrl.sendGetRequest("https://dynamic.watch/routes/favorites.json", "", sessionid);
         Log.i("www", ret.toString());
 
         if(ret.getmRetCode() == 302 && ret.getmRetContent().contains("https://dynamic.watch/users/sign_in")) { // 重新登录
             HttpRet retlogin = dwMaplogin(acc, pwd);
             if(retlogin.getmRetContent().contains("<a href=\"http://dynamic.watch/\">redirected</a>")
                     || retlogin.getmRetContent().contains("<a href=\"http://dynamic.watch/me\">redirected</a>")) {
-                ret =  MUrl.sendGetRequest("http://dynamic.watch/routes/page/0/100.json","",  sessionid);
+                ret =  MUrl.sendGetRequest("https://dynamic.watch/routes/favorites.json","",  sessionid);
             }
         }
 
@@ -82,7 +83,7 @@ public class HttpFunc {
     }
 
     public HttpRet dwMapSetDefault(int id) {
-        HttpRet ret =  MUrl.sendGetRequest("http://dynamic.watch/route/current/uploaded/" + id,"",  sessionid);
+        HttpRet ret =  MUrl.sendGetRequest("https://dynamic.watch/route/current/uploaded/" + id,"",  sessionid);
         Log.i("www", ret.toString());
         if(ret.getmRetCode() == 302 && ret.getmRetContent().contains("http://dynamic.watch/users/sign_in")) { // 重新登录
             HttpRet retlogin = dwMaplogin(acc, pwd);

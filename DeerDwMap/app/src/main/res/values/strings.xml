@@ -32,8 +32,15 @@
 
 
     <string name="tip_success">Successed.</string>
+    <string name="tip_fail">Failed.</string>
     <string name="tip_setting">Setting...</string>
     <string name="tip_uploading">Uploading...</string>
+
+    <string name="title_switch">Distance unit</string>
+
+
+    <string name="distance_miles">Miles</string>
+    <string name="distance_km">Km</string>
 
     <string name="line_account">Account:</string>
 

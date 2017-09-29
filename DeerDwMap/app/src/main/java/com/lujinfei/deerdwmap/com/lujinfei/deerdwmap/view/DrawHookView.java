@@ -27,6 +27,8 @@ public class DrawHookView extends IISharkView {
 
     private boolean finished = false;
 
+    private boolean error = false;
+
     private boolean line2begin = false;
 
     private int current_color = Color.WHITE;
@@ -46,6 +48,8 @@ public class DrawHookView extends IISharkView {
     public void setFinished() {
         this.finished = true;
     }
+
+    public void setError() { this.error = true; }
 
     //绘制
 
@@ -89,6 +93,9 @@ public class DrawHookView extends IISharkView {
         //根据进度画圆弧
         canvas.drawArc(rectF, 235, -360 * progress / 100, false, paint);
 
+        if(error) {
+            dialogListener.onColse();
+        }
 
         if(finished && current_color == Color.WHITE) {
             /**

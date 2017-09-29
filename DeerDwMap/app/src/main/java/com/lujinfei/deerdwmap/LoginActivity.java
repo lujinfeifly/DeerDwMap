@@ -33,19 +33,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.github.lujinfeifly.freejava.basic.MString;
+import com.github.lujinfeifly.freejava.http.HttpRet;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.bean.AData;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.httpfunc.HttpFunc;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.storedata.PathData;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.storedata.User;
 import com.umeng.analytics.MobclickAgent;
-
-import org.json.JSONException;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import deer.milu.freejava.basic.MString;
-import deer.milu.freejava.http.HttpRet;
 
 import static android.Manifest.permission.READ_CONTACTS;
 

@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.util.Xml;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -35,9 +37,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.github.lujinfeifly.freejava.http.HttpRet;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.adapter.GbxListAdapter;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.adapter.PathListAdapter;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.bean.AData;
+import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.bean.Path;
+import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.bean.PathMsg;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.storedata.LocalPath;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.storedata.PathData;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.storedata.User;
@@ -48,17 +53,31 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlSerializer;
 
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.Buffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import deer.milu.freeandroid.swipelistview.SwipeMenu;
-import deer.milu.freeandroid.swipelistview.SwipeMenuCreator;
-import deer.milu.freeandroid.swipelistview.SwipeMenuItem;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import deer.milu.freeandroid.swipelistview.SwipeMenuListView;
-import deer.milu.freejava.http.HttpRet;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,OnClickListener, AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener{
@@ -104,6 +123,10 @@ public class MainActivity extends BaseActivity
     private boolean isloadWebView = false;
 
     private SwipeRefreshLayout mSwipeLayoutPathList;
+
+    private Button btnDistanceKm, btnDistanceMales;
+
+    private int distanceSwitch = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,43 +177,26 @@ public class MainActivity extends BaseActivity
         lvPathList = (SwipeMenuListView)findViewById(R.id.lv_account_list);
 
         // step 1. create a MenuCreator
-        SwipeMenuCreator creator = new SwipeMenuCreator() {
-
-            @Override
-            public void create(SwipeMenu menu) {
-                // create "open" item
-//                SwipeMenuItem openItem = new SwipeMenuItem(
+//        SwipeMenuCreator creator = new SwipeMenuCreator() {
+//
+//            @Override
+//            public void create(SwipeMenu menu) {
+//                // create "delete" item
+//                SwipeMenuItem deleteItem = new SwipeMenuItem(
 //                        getApplicationContext());
 //                // set item background
-//                openItem.setBackground(new ColorDrawable(Color.rgb(0xC9, 0xC9,
-//                        0xCE)));
+//                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+//                        0x3F, 0x25)));
 //                // set item width
-//                openItem.setWidth(180);
-//                // set item title
-//                openItem.setTitle("Open");
-//                // set item title fontsize
-//                openItem.setTitleSize(18);
-//                // set item title font color
-//                openItem.setTitleColor(Color.WHITE);
+//                deleteItem.setWidth(200);
+//                // set a icon
+//                deleteItem.setIcon(R.drawable.ic_delete);
 //                // add to menu
-//                menu.addMenuItem(openItem);
+//                menu.addMenuItem(deleteItem);
+//            }
+//        };
 
-                // create "delete" item
-                SwipeMenuItem deleteItem = new SwipeMenuItem(
-                        getApplicationContext());
-                // set item background
-                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
-                        0x3F, 0x25)));
-                // set item width
-                deleteItem.setWidth(200);
-                // set a icon
-                deleteItem.setIcon(R.drawable.ic_delete);
-                // add to menu
-                menu.addMenuItem(deleteItem);
-            }
-        };
-
-        lvPathList.setMenuCreator(creator);
+//        lvPathList.setMenuCreator(creator);
         lvGbxList = (ListView)findViewById(R.id.lv_filegbx_list);
 
         btnLinkWatch = (Button)findViewById(R.id.linkwatch_button);
@@ -217,7 +223,7 @@ public class MainActivity extends BaseActivity
 
 
         data = new AData();
-        pathListAdapter = new PathListAdapter(MainActivity.this, data.getRows());
+        pathListAdapter = new PathListAdapter(MainActivity.this, getPathList(data));
         lvPathList.setAdapter(pathListAdapter);
 
         localFileListGbx = new ArrayList<File>();
@@ -233,8 +239,28 @@ public class MainActivity extends BaseActivity
         webView = (WebView) findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
 
+
+        btnDistanceKm = (Button) findViewById(R.id.btn_sw_km);
+        btnDistanceMales = (Button) findViewById(R.id.btn_sw_miles);
+
+        btnDistanceKm.setOnClickListener(this);
+        btnDistanceMales.setOnClickListener(this);
+
         mCurrentIndex = R.id.vf_list; //表示为第一页
         initView();
+    }
+
+    private List<Path> getPathList(AData data) {
+        if(data == null) {
+            return null;
+        }
+
+        List<Path> list = data.getRows();
+        for(int i=0;i<list.size(); i++) {
+            list.get(i).getTable().setDistanceUnit(distanceSwitch);
+        }
+
+        return data.getRows();
     }
 
     private void initView() {
@@ -244,7 +270,7 @@ public class MainActivity extends BaseActivity
         String strData = PathData.getName(this);
         try {
             data = new AData(strData);
-            pathListAdapter.setData(data.getRows());
+            pathListAdapter.setData(getPathList(data));
         }catch(JSONException ex) {
             ex.printStackTrace();
         }
@@ -256,6 +282,18 @@ public class MainActivity extends BaseActivity
         String acc = User.getName(this);
         tvAccountShow.setText(acc);
         tvAccountLogout.setText(getText(R.string.line_account) + acc);
+
+        distanceSwitch = User.getSwitchDistance(this);
+        switch (distanceSwitch) {
+            case 1:
+                btnDistanceMales.setBackgroundResource(R.drawable.btn_bottom_distance_selected);
+                btnDistanceKm.setBackgroundResource(R.drawable.btn_bottom_distance);
+                break;
+            case 2:
+                btnDistanceMales.setBackgroundResource(R.drawable.btn_bottom_distance);
+                btnDistanceKm.setBackgroundResource(R.drawable.btn_bottom_distance_selected);
+                break;
+        }
     }
 
 
@@ -330,7 +368,7 @@ public class MainActivity extends BaseActivity
                 break;
             case R.id.nav_help:
                 if(!isloadWebView) {
-                    webView.loadUrl("http://dwmap.applinzi.com/haaa.html");
+                    webView.loadUrl("http://123.59.100.61:8082/wuye/ReadMe.html");
                     webView.setWebViewClient(new WebViewClient());
                     isloadWebView = true;
                 }
@@ -431,6 +469,27 @@ public class MainActivity extends BaseActivity
             case R.id.btn_preto2:
                 llstep3.setVisibility(View.INVISIBLE);
                 llstep2.setVisibility(View.VISIBLE);
+                break;
+            case R.id.btn_sw_km:
+                if(distanceSwitch == 1) {
+                    distanceSwitch = 2;
+                    User.setSwitchDistance(this, 2);
+                    btnDistanceMales.setBackgroundResource(R.drawable.btn_bottom_distance);
+                    btnDistanceKm.setBackgroundResource(R.drawable.btn_bottom_distance_selected);
+                    pathListAdapter.setData(getPathList(data));
+                    pathListAdapter.notifyDataSetChanged();
+                }
+                break;
+            case R.id.btn_sw_miles:
+                if(distanceSwitch == 2) {
+                    distanceSwitch = 1;
+                    User.setSwitchDistance(this, 1);
+                    btnDistanceMales.setBackgroundResource(R.drawable.btn_bottom_distance_selected);
+                    btnDistanceKm.setBackgroundResource(R.drawable.btn_bottom_distance);
+                    pathListAdapter.setData(getPathList(data));
+                    pathListAdapter.notifyDataSetChanged();
+                }
+                break;
             default:
         }
     }
@@ -447,7 +506,7 @@ public class MainActivity extends BaseActivity
 
             try {
                 data = new AData(ret.getmRetContent());
-                pathListAdapter.setData(data.getRows());
+                pathListAdapter.setData(getPathList(data));
             }catch(JSONException ex) {
                 ex.printStackTrace();
             }
@@ -467,7 +526,7 @@ public class MainActivity extends BaseActivity
 
             try {
                 data = new AData(ret.getmRetContent());
-                pathListAdapter.setData(data.getRows());
+                pathListAdapter.setData(getPathList(data));
             }catch(JSONException ex) {
                 ex.printStackTrace();
             }
@@ -545,6 +604,58 @@ public class MainActivity extends BaseActivity
         @Override
         public void run() {
             File file = localFileListGbx.get(fileUploadIndex);
+
+            /// xml parse begin
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+
+            org.w3c.dom.Document document = null;
+            try {
+                DocumentBuilder builder = builderFactory.newDocumentBuilder();
+                document = builder.parse(file);
+            } catch (ParserConfigurationException e) {
+                handler.obtainMessage(4, 2).sendToTarget();
+                return;
+            } catch (SAXException e) {
+                handler.obtainMessage(4, 2).sendToTarget();
+                return;
+            } catch (IOException e) {
+                handler.obtainMessage(4, 2).sendToTarget();
+                return;
+            }
+
+            NodeList list = document.getChildNodes();
+            NodeList nodelist = list.item(0).getChildNodes();
+            int length = nodelist.getLength();
+            boolean ishave = false;
+            out1:   for(int i=0;i<length;i++) {
+                if(nodelist.item(i).getNodeName().equals("trk")) {
+                    NodeList nodelist2 = nodelist.item(i).getChildNodes();
+                    int length2 = nodelist2.getLength();
+                    for(int j=0;j<length2;j++) {
+                        Node node = nodelist2.item(j);
+                        String name = node.getNodeName();
+                        if(node.getNodeName().equals("name")) {
+                            String cccc = nodelist2.item(j).getTextContent();
+                            System.out.println(cccc);
+                            ishave = true;
+                            break out1;
+                        }
+
+                    }
+                    // 没有找到
+                }
+            }
+
+            if(!ishave) {
+                try {
+                    insert(file.getAbsolutePath(), 0, file.getName().substring(0, file.getName().indexOf('.')));
+                }catch(Exception ex) {
+
+                }
+            }
+
+            //// xml parse end
+
             HttpRet ret = httpFunc.dwMapUpload(file);
             int data = 1;
             if(ret.getmRetCode() == 200) {
@@ -555,6 +666,39 @@ public class MainActivity extends BaseActivity
             handler.obtainMessage(4, data).sendToTarget();
         }
     };
+
+
+    public static boolean insert(String fileName,long pos,String insertContent) throws IOException
+    {
+        FileWriter writer = new FileWriter(fileName+"-tmp");
+        FileReader reader = new FileReader(fileName);
+        BufferedReader br = new BufferedReader(reader);
+        BufferedWriter wr = new BufferedWriter(writer);
+        String str = null;
+        boolean havedo =false;
+        while((str = br.readLine()) != null) {
+            if(!havedo && str.contains("<trk>")) {
+                havedo = true;
+                int index = str.indexOf("<trk>");
+                index += 4;
+                String x = str.substring(0, index+1) + "<name>"+ insertContent +"</name>" + str.substring(index+1);
+                wr.write(x);
+                continue;
+            }
+            wr.write(str);
+        }
+
+        br.close();
+        reader.close();
+        wr.close();
+        writer.close();
+
+        File oldFile  = new File(fileName);
+        oldFile.delete();
+        File newFile  = new File(fileName+"-tmp");
+        return newFile.renameTo(oldFile);
+
+    }
 
     private android.os.Handler handler = new android.os.Handler() {
         @Override
@@ -583,10 +727,19 @@ public class MainActivity extends BaseActivity
                     break;
                 case 4: // 上传结果
                     ret = (int)msg.obj;
-                    cancleLoading();
-                    if(ret == 0) {
-                        MobclickAgent.onEvent(MainActivity.this, "UPLOAD_PATH_OK");
-                        new Thread(networkTaskGetList).start();
+                    switch(ret) {
+                        case 0:
+                            cancleLoading();
+                            MobclickAgent.onEvent(MainActivity.this, "UPLOAD_PATH_OK");
+                            new Thread(networkTaskGetList).start();
+                            break;
+                        case 1:
+                            cancelLoadingWithError();
+                            MobclickAgent.onEvent(MainActivity.this, "UPLOAD_PATH_FAILED");
+                            break;
+                        default:
+                            cancelLoadingWithError();
+                            MobclickAgent.onEvent(MainActivity.this, "UPLOAD_PATH_FAILED");
                     }
                     MobclickAgent.onEvent(MainActivity.this, "UPLOAD_PATH");
                     break;

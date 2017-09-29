@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.httpfunc.HttpFunc;
 
-import deer.milu.freejava.http.HttpRet;
 
 /**
  * Created by lujinfei on 2016/4/7.

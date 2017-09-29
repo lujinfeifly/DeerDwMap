@@ -77,6 +77,12 @@ public class BaseActivity  extends AppCompatActivity {
         }
     }
 
+    public void cancelLoadingWithError() {
+        if (loading != null) {
+            loading.setError();
+        }
+    }
+
     protected ShowEndDialog createLoadingDialog(Context context, String msg) {
 
         ShowEndDialog loadingDialog = new ShowEndDialog(context, R.style.loading_dialog, msg);// 创建自定义样式dialog

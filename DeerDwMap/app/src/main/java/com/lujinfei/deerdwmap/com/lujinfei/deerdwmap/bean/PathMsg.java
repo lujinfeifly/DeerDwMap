@@ -29,6 +29,8 @@ public class PathMsg {
     private String distance_display;
     private boolean shareable;
 
+    private int distanceUnit = 1;
+
     public PathMsg(String data) throws JSONException {
         JSONObject json = new JSONObject(data);
         city = json.getString("city");
@@ -211,5 +213,13 @@ public class PathMsg {
 
     public void setShareable(boolean shareable) {
         this.shareable = shareable;
+    }
+
+    public int getDistanceUnit() {
+        return distanceUnit;
+    }
+
+    public void setDistanceUnit(int distanceUnit) {
+        this.distanceUnit = distanceUnit;
     }
 }

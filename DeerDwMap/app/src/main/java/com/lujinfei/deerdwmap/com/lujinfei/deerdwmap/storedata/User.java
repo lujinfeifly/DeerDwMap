@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import deer.milu.freejava.basic.MEncrypt;
-import deer.milu.freejava.basic.MString;
-
 /**
  * Created by lujinfei on 2016/4/6.
  */
@@ -47,5 +44,26 @@ public class User {
 //            return MEncrypt.AESdecrypt(bytes, ssd);
 //        }
         return asc;
+    }
+    public static Integer getSwitchDistance(Context context) {
+        SharedPreferences sp =context.getSharedPreferences("PROPERTIRS", Activity.MODE_PRIVATE);
+        String ret = sp.getString("DISUNIS", null);
+        return "km".equals(ret)?2:1;
+    }
+
+    public static void setSwitchDistance(Context context, int value) {
+        SharedPreferences sp =context.getSharedPreferences("PROPERTIRS", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        String set = "";
+        switch (value) {
+            case 1:
+                set = "males";
+                break;
+            case 2:
+                set = "km";
+                break;
+        }
+        editor.putString("DISUNIS", set);
+        editor.commit();
     }
 }
