@@ -522,8 +522,6 @@ public class MainActivity extends BaseActivity
         @Override
         public void run() {
             HttpRet  ret  = httpFunc.dwMapGetList();
-
-
             try {
                 data = new AData(ret.getmRetContent());
                 pathListAdapter.setData(getPathList(data));

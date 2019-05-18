@@ -97,7 +97,7 @@ public class HttpFunc {
     }
 
     public HttpRet dwMapLinkWatchPre() {
-        HttpRet ret =  MUrl.sendGetRequest("http://dynamic.watch/link_codes/new","",  sessionid);
+        HttpRet ret =  MUrl.sendGetRequest("https://dynamic.watch/link_codes/new","",  sessionid);
         Log.i("www", ret.toString());
         if(MString.isNotEmpty(ret.getmSessionId())) {
             sessionid = ret.getmSessionId();
@@ -109,7 +109,7 @@ public class HttpFunc {
     public HttpRet dwMapLinkWatch(String valid, String code) {
         String va = java.net.URLEncoder.encode(valid);
         String co = java.net.URLEncoder.encode(code);
-        HttpRet ret =  MUrl.sendPostRequest("http://dynamic.watch/link_codes",
+        HttpRet ret =  MUrl.sendPostRequest("https://dynamic.watch/link_codes",
                 "utf8=%E2%9C%93&authenticity_token="+va+"&link_code%5Bcode%5D="+co+"&commit=Link+Watch",
                 sessionid);
         Log.i("www", ret.toString());
@@ -125,7 +125,7 @@ public class HttpFunc {
 
         Log.i("www*****************", uploadToken);
         if(MString.isEmpty(uploadToken)) {
-            HttpRet ret5 = MUrl.sendGetRequest("http://dynamic.watch/routes/new", "", sessionid);
+            HttpRet ret5 = MUrl.sendGetRequest("https://dynamic.watch/routes/new", "", sessionid);
             Log.i("www", ret5.toString());
             if (ret5.getmRetCode() == 200) {
                 Document doc = Jsoup.parse(ret5.getmRetContent());
@@ -144,7 +144,7 @@ public class HttpFunc {
         List<MNameValuePair> param = new ArrayList<MNameValuePair>();
         param.add(a);
         param.add(b);
-        HttpRet ret6 = MUrl.uploadFile("http://dynamic.watch/routes/upload", param, file, sessionid);
+        HttpRet ret6 = MUrl.uploadFile("https://dynamic.watch/routes/upload", param, file, sessionid);
         Log.i("www", ret6.toString());
 
         if(MString.isNotEmpty(ret6.getmSessionId())) {
