@@ -2,11 +2,6 @@ package com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.httpfunc;
 
 import android.util.Log;
 
-import com.github.lujinfeifly.freejava.basic.MString;
-import com.github.lujinfeifly.freejava.bean.MNameValuePair;
-import com.github.lujinfeifly.freejava.http.HttpRet;
-import com.github.lujinfeifly.freejava.http.MUrl;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,6 +10,11 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.miludeer.freejava.basic.MString;
+import cn.miludeer.freejava.bean.MNameValuePair;
+import cn.miludeer.freejava.http.HttpRet;
+import cn.miludeer.freejava.http.MUrl;
 
 
 /**

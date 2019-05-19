@@ -33,13 +33,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.github.lujinfeifly.freejava.basic.MString;
-import com.github.lujinfeifly.freejava.http.HttpRet;
-import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.bean.AData;
-import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.httpfunc.HttpFunc;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.storedata.PathData;
 import com.lujinfei.deerdwmap.com.lujinfei.deerdwmap.storedata.User;
 import com.umeng.analytics.MobclickAgent;
+
+import cn.miludeer.freejava.basic.MString;
+import cn.miludeer.freejava.http.HttpRet;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -262,7 +261,7 @@ public class LoginActivity extends BaseActivity {
             }
 
             // 获取列表进行保存
-            HttpRet  ret  = httpFunc.dwMapGetList();
+            HttpRet ret  = httpFunc.dwMapGetList();
             // 保存数据
             PathData.setName(LoginActivity.this, ret.getmRetContent());
             handler.obtainMessage(0, null).sendToTarget();
