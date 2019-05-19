@@ -43,7 +43,9 @@
 
     <string name="line_account">账号：</string>
 
+
     <string name="drawer_header">本地</string>
+    <string name="drawer_create_path">规划新路径</string>
     <string name="drawer_all_path">所有路径</string>
     <string name="drawer_link_watch">手表同步</string>
     <string name="drawer_set">设置</string>

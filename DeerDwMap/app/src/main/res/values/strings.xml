@@ -45,6 +45,7 @@
     <string name="line_account">Account:</string>
 
     <string name="drawer_header">Local</string>
+    <string name="drawer_create_path">New</string>
     <string name="drawer_all_path">All Path</string>
     <string name="drawer_link_watch">Link Watch</string>
     <string name="drawer_set">Settings</string>

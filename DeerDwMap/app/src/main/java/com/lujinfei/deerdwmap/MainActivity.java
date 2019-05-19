@@ -368,6 +368,11 @@ public class MainActivity extends BaseActivity
             case R.id.nav_self:
                 vfSelf.setVisibility(View.VISIBLE);
                 break;
+            case R.id.nav_createpath:
+                Intent mainInfo = new Intent(this, AMapActivitiy.class);
+//                mainInfo.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(mainInfo);
+                break;
             default:
 
         }

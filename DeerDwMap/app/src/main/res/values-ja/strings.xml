@@ -44,6 +44,7 @@
     <string name="line_account">アカウント：</string>
 
     <string name="drawer_header">ローカル</string>
+    <string name="drawer_create_path">规划新路径</string>
     <string name="drawer_all_path">すべての経路</string>
     <string name="drawer_link_watch">腕時計同期</string>
     <string name="drawer_set">设置</string>
